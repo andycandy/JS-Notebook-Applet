@@ -13,10 +13,12 @@
     "markdown-it": "^14.1.0",
     "monaco-editor": "^0.52.2",
     "safevalues": "^1.2.0",
-    "sortable": "^2.0.0"
+    "sortablejs": "^1.15.6"
   },
   "devDependencies": {
+    "@types/markdown-it": "^14.1.2",
     "@types/node": "^22.14.0",
+    "@types/sortablejs": "^1.15.8",
     "typescript": "~5.7.2",
     "vite": "^6.2.0"
   }
