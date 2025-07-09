@@ -2,7 +2,7 @@
 
 [![Open in AI Studio](https://storage.googleapis.com/generativeai-downloads/images/Open_in_AIStudio.svg)](https://aistudio.google.com/apps/bundled/get_started?showPreview=true)
 
-A lightweight applet for [Google AI Studio](https://aistudio.google.com/) that enables users to write, run, and interact with JavaScript (JS) code in a notebook interface—similar to Python's Colab notebooks, but for JavaScript! This repo contains resources and documentation for the JS Notebook Applet.
+A lightweight applet for [Google AI Studio](https://aistudio.google.com/) that enables users to write, run, and interact with JavaScript (JS) code in a notebook interface, similar to Python's Colab notebooks, but for JavaScript! This repo contains resources and documentation for the JS Notebook Applet.
 
 ---
 
