@@ -289,65 +289,65 @@ body {
   border: 1px solid #3c3c3c;
 }
 
-.output h1, .output h2, .output h3, .output h4, .output h5, .output h6 {
+.cell.rendered-md .output h1, .cell.rendered-md .output h2, .cell.rendered-md .output h3, .cell.rendered-md .output h4, .cell.rendered-md .output h5, .cell.rendered-md .output h6 {
   margin: 0.8em 0 0.4em 0;
   line-height: 1.2;
 }
 
-.output h1 {
+.cell.rendered-md .output h1 {
   color: #2e64de;
   font-size: 32px;
 }
 
-.output h2 {
+.cell.rendered-md .output h2 {
   color: #217bfe;
   font-size: 30px;
 }
 
-.output h3 {
+.cell.rendered-md .output h3 {
   color: #078efb;
   font-size: 25px;
   margin-left: 10px;
 }
 
-.output h4 {
+.cell.rendered-md .output h4 {
   color: #3c8fe3;
   font-size: 20px;
   margin-left: 20px;
 }
 
-.output h5, .output h6 {
+.cell.rendered-md .output h5, .cell.rendered-md .output h6 {
   color: #c7e4ff;
   font-size: 16px;
   margin-left: 30px;
 }
 
-.output a {
+.cell.rendered-md .output a {
   color: #987be9
 }
 
-.output p {
+.cell.rendered-md .output p {
   margin: 0.5em 0;
   line-height: 1.5;
 }
 
-.output ul, .output ol {
+.cell.rendered-md .output ul, .cell.rendered-md .output ol {
   margin: 0.5em 0;
   padding-left: 1.5em;
 }
 
-.output li {
+.cell.rendered-md .output li {
   margin: 0.2em 0;
 }
 
-.output blockquote {
+.cell.rendered-md .output blockquote {
   margin: 0.5em 0;
   padding-left: 1em;
   border-left: 3px solid #555;
   color: #aaa;
 }
 
-.output pre {
+.cell.rendered-md .output pre {
   background: #1e1e1e;
   color: #d4d4d4;
   padding: 8px;
@@ -356,7 +356,7 @@ body {
   margin: 0.5em 0;
 }
 
-.output code {
+.cell.rendered-md .output code {
   background: #333;
   color: #f8f8f2;
   padding: 2px 4px;
@@ -364,28 +364,32 @@ body {
   font-family: 'Courier New', monospace;
 }
 
-.output table {
+.cell.rendered-md .output table {
   border-collapse: collapse;
   width: 100%;
   margin: 0.5em 0;
 }
 
-.output th, .output td {
+.cell.rendered-md .output th, .cell.rendered-md .output td {
   border: 1px solid #555;
   padding: 8px;
   text-align: left;
 }
 
-.output th {
+.cell.rendered-md .output th {
   background: #3c3c3c;
   font-weight: bold;
 }
 
-.output img {
+.cell.rendered-md .output img {
   max-width: 100%;
   height: auto;
   margin: 0.5em 0;
   border-radius: 4px;
+}
+
+.cell.md {
+  background: transparent;
 }
 
 /* Button Styles */
