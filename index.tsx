@@ -7,6 +7,7 @@ import loader from '@monaco-editor/loader';
 import markdownit from 'markdown-it';
 import {sanitizeHtml} from 'safevalues';
 import {setAnchorHref, setElementInnerHtml, windowOpen} from 'safevalues/dom';
+import Sortable from 'sortablejs';
 
 interface MarkdownItInstance {
   render: (markdown: string) => string;
@@ -1181,6 +1182,17 @@ limitations under the License.`;
         return;
       }
       inserter.style.display = 'none';
+    });
+
+    new Sortable(notebook, {
+      animation: 150,
+      handle: '.drag-handle',
+      onEnd: (evt: any) => {
+        if (evt.oldIndex !== undefined && evt.newIndex !== undefined && evt.oldIndex !== evt.newIndex) {
+          const [movedItem] = cells.splice(evt.oldIndex, 1);
+          cells.splice(evt.newIndex, 0, movedItem);
+        }
+      },
     });
   } catch (error) {
     console.error('Failed to load notebook:', error);
