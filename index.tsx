@@ -111,9 +111,8 @@ function renderOutputs(outputDiv: HTMLElement, outputs: Output[]) {
   outputs.forEach((output) => {
     switch (output.type) {
       case 'log':
-        // Decode HTML entities before rendering markdown to handle escaped characters properly
-        const decodedData = decodeHtmlEntities(output.data);
-        const sanitizedLogContent = sanitizeHtml(md.render(decodedData));
+        // md.render(output.data) produces HTML. Sanitize it.
+        const sanitizedLogContent = sanitizeHtml(md.render(output.data));
         outputHtml += `<div class="console-log">${sanitizedLogContent.toString()}</div>`;
         break;
       case 'error':
@@ -159,19 +158,6 @@ function renderOutputs(outputDiv: HTMLElement, outputs: Output[]) {
   });
 
   setElementInnerHtml(outputDiv, sanitizeHtml(outputHtml));
-}
-
-// Add a utility function to decode HTML entities
-function decodeHtmlEntities(html: string): string {
-  const sanitizedHtml = sanitizeHtml(html);  // First, sanitize the input
-  const entities: { [key: string]: string } = {
-    '&amp;': '&',
-    '&lt;': '<',
-    '&gt;': '>',
-    '&quot;': '"',
-    '&#39;': "'"
-  };
-  return String(sanitizedHtml).replace(/&amp;|&lt;|&gt;|&quot;|&#39;/gi, (match: string) => entities[match as keyof typeof entities] || match);
 }
 
 function parseNotebookFile(content: string) {
