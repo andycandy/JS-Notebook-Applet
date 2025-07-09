@@ -268,7 +268,6 @@ function parseNotebookFile(content: string) {
 function updateOutputToggle(
   cellId: string,
   isVisible: boolean,
-  hasOutput = true,
 ) {
   const outputDiv = document.getElementById(`${cellId}_output`);
   const outputToggle = outputDiv?.previousElementSibling as HTMLElement;
@@ -280,7 +279,7 @@ function updateOutputToggle(
       return;
     }
 
-    if (hasOutput) {
+    if (cell.outputs.length > 0) {
       outputDiv.style.display = isVisible ? '' : 'none';
       const icon = outputToggle.querySelector('i');
       if (icon) {
@@ -391,7 +390,7 @@ async function addCell(
     const cell = cells.find((c) => c.id === cellId);
     if (cell && cell.type === 'js' && cell.outputs.length > 0) {
       cell.isOutputVisible = !cell.isOutputVisible;
-      updateOutputToggle(cellId, cell.isOutputVisible, true);
+      updateOutputToggle(cellId, cell.isOutputVisible);
     }
   });
 
@@ -447,11 +446,9 @@ async function addCell(
     cells.push(newCellData);
   }
 
-  const hasInitialOutput = type === 'js' && outputs.length > 0;
   updateOutputToggle(
     cellId,
     newCellData.isOutputVisible || false,
-    hasInitialOutput,
   );
 
   editorInstance.onDidContentSizeChange(() => {
@@ -599,7 +596,7 @@ async function runCell(cellId: string) {
       cellElement.classList.add('rendered-md');
       cell.mode = 'render';
       cell.isOutputVisible = true;
-      updateOutputToggle(cellId, true, true);
+      updateOutputToggle(cellId, true);
     } else {
       outputDiv.style.display = 'none';
       outputDiv.style.cursor = 'default';
@@ -608,7 +605,7 @@ async function runCell(cellId: string) {
       cellElement.classList.remove('rendered-md');
       cell.mode = 'edit';
       cell.isOutputVisible = false;
-      updateOutputToggle(cellId, false, true);
+      updateOutputToggle(cellId, false);
       editor.layout();
       editor.focus();
     }
@@ -620,8 +617,13 @@ async function runCell(cellId: string) {
 
   const showOutput = () => {
     cell.isOutputVisible = true;
-    updateOutputToggle(cellId, true, true);
+    updateOutputToggle(cellId, true);
     renderOutputs(outputDiv, cell.outputs);
+  };
+
+  const hideOutput = () => {
+    cell.isOutputVisible = false;
+    updateOutputToggle(cellId, false);
   };
 
   const sandboxConsole = {
@@ -673,6 +675,9 @@ async function runCell(cellId: string) {
       cellScope,
     );
     markCellAsExecuted(cellId, code);
+    if (cell.outputs.length === 0) {
+      hideOutput();
+    }
   } catch (e: unknown) {
     const errorMessage = e instanceof Error ? e.message : String(e);
     sandboxConsole.error('Uncaught:', errorMessage);
@@ -723,7 +728,7 @@ function restartKernel() {
       const outputDiv = document.getElementById(`${cell.id}_output`);
       if (outputDiv) {
         setElementInnerHtml(outputDiv, sanitizeHtml(''));
-        updateOutputToggle(cell.id, false, false);
+        updateOutputToggle(cell.id, false);
       }
     }
   });
@@ -842,7 +847,7 @@ async function restartAndRunAll() {
       const outputDiv = document.getElementById(`${cell.id}_output`);
       if (outputDiv) {
         setElementInnerHtml(outputDiv, sanitizeHtml(''));
-        updateOutputToggle(cell.id, false, false);
+        updateOutputToggle(cell.id, false);
       }
     }
   });
