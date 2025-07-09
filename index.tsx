@@ -302,11 +302,10 @@ async function addCell(
   outputs: Output[] = [],
   index?: number,
 ) {
-  // Monaco is already imported, no need to await
   const cellId = `cell${cellCounter++}`;
   const cellDiv = document.createElement('div');
 
-  cellDiv.className = 'cell';
+  cellDiv.className = `cell ${type}`;
   cellDiv.id = `cell-container-${cellId}`;
   cellDiv.dataset.cellId = cellId;
 
@@ -917,7 +916,12 @@ Object.assign(window, {
     base: 'vs-dark',
     inherit: true,
     rules: [],
-    colors: {'editor.background': '#252526'},
+    colors: {
+      'editor.background': '#00000000', // Transparent using RGBA hex format
+      'focusBorder': '#00000000', // Remove focus border
+      'editor.focusedBorder': '#00000000', // Remove focused border
+      'editorWidget.border': '#00000000', // Remove widget borders
+    },
   });
 
   // Add collapsible copyright cell before loading notebook content
