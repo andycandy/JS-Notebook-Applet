@@ -571,7 +571,66 @@ async function runAllCells() {
 
 const persistentScope: Record<string, unknown> = {};
 
+let isCellRunning = false;
+let cellRunQueue: string[] = [];
+
+function updateRunButtonState(cellId: string) {
+  const cellElement = document.getElementById(`cell-container-${cellId}`);
+  const runButton = cellElement?.querySelector('.cell-hover-menu button:first-child') as HTMLButtonElement;
+  const runIcon = runButton?.querySelector('i');
+  if (!runButton || !runIcon) return;
+
+  const cellType = cells.find(c => c.id === cellId)?.type;
+  const runButtonTitle = cellType === 'md' ? 'Render Markdown' : 'Run Code';
+  const queuedTitle = cellType === 'md' ? 'Queued to Render' : 'Queued to Run';
+  const runningTitle = cellType === 'md' ? 'Rendering...' : 'Running...';
+
+  if (isCellRunning && cellId === cellRunQueue[0]) {
+    runIcon.className = 'fa-solid fa-spinner fa-spin';
+    runButton.disabled = true;
+    runButton.title = runningTitle;
+    cellElement?.classList.add('running');
+  } else if (cellRunQueue.includes(cellId)) {
+    runIcon.className = 'fa-solid fa-clock';
+    runButton.disabled = true;
+    runButton.title = queuedTitle;
+    cellElement?.classList.add('queued');
+  } else {
+    runIcon.className = 'fa-solid ' + (cellType === 'md' ? 'fa-check-double' : 'fa-play');
+    runButton.disabled = false;
+    runButton.title = runButtonTitle;
+    cellElement?.classList.remove('running', 'queued');
+  }
+}
+
+function addToQueue(cellId: string) {
+  if (!cellRunQueue.includes(cellId)) {
+    cellRunQueue.push(cellId);
+    updateRunButtonState(cellId);
+  }
+}
+
+function removeFromQueue(cellId: string) {
+  cellRunQueue = cellRunQueue.filter(id => id !== cellId);
+  updateRunButtonState(cellId);
+  cellRunQueue.forEach(id => updateRunButtonState(id));
+}
+
+function runNextInQueue() {
+  if (cellRunQueue.length > 0 && !isCellRunning) {
+    const nextCellId = cellRunQueue[0];
+    runCell(nextCellId);
+  }
+}
+
 async function runCell(cellId: string) {
+  if (isCellRunning) {
+    addToQueue(cellId);
+    return;
+  }
+
+  isCellRunning = true;
+  updateRunButtonState(cellId);
   const cell = cells.find((c) => c.id === cellId);
   const editor = monacoInstances[cellId];
   const outputDiv = document.getElementById(
@@ -581,11 +640,16 @@ async function runCell(cellId: string) {
     `${cellId}_editor_container`,
   ) as HTMLDivElement;
   const cellElement = document.getElementById(`cell-container-${cellId}`);
+  const runButton = cellElement?.querySelector('.cell-hover-menu button:first-child i');
 
-  if (!cell || !editor || !outputDiv || !editorContainer || !cellElement) {
+  if (!cell || !editor || !outputDiv || !editorContainer || !cellElement || !runButton) {
     console.error(`Could not run cell ${cellId}: missing dependencies`);
+    isCellRunning = false;
+    runNextInQueue();
     return;
   }
+
+  runButton.className = 'fa-solid fa-spinner fa-spin';
 
   const code = editor.getValue();
 
@@ -612,6 +676,10 @@ async function runCell(cellId: string) {
       editor.layout();
       editor.focus();
     }
+    runButton.className = 'fa-solid ' + (cell.type === 'md' ? 'fa-check-double' : 'fa-play');
+    isCellRunning = false;
+    removeFromQueue(cellId);
+    runNextInQueue();
     return;
   }
 
@@ -677,6 +745,11 @@ async function runCell(cellId: string) {
     const errorMessage = e instanceof Error ? e.message : String(e);
     sandboxConsole.error('Uncaught:', errorMessage);
     markCellAsExecuted(cellId, code);
+  } finally {
+    runButton.className = 'fa-solid fa-play';
+    isCellRunning = false;
+    removeFromQueue(cellId);
+    runNextInQueue();
   }
 }
 
